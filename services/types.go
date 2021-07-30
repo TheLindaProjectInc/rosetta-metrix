@@ -17,7 +17,7 @@ package services
 import (
 	"context"
 
-	"github.com/coinbase/rosetta-bitcoin/bitcoin"
+	"github.com/TheLindaProjectInc/rosetta-metrix/bitcoin"
 
 	"github.com/coinbase/rosetta-sdk-go/types"
 )
@@ -41,7 +41,7 @@ const (
 	inlineFetchLimit = 100
 
 	// MiddlewareVersion is the version
-	// of rosetta-bitcoin. We set this as a
+	// of rosetta-metrix. We set this as a
 	// variable instead of a constant because
 	// we typically need the pointer of this
 	// value.

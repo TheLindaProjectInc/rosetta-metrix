@@ -22,9 +22,9 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/coinbase/rosetta-bitcoin/bitcoin"
+	"github.com/TheLindaProjectInc/rosetta-metrix/bitcoin"
 
-	"github.com/btcsuite/btcd/chaincfg"
+	"github.com/TheLindaProjectInc/rosetta-metrix/metrixsuite/btcd/chaincfg"
 	"github.com/coinbase/rosetta-sdk-go/storage/encoder"
 	"github.com/coinbase/rosetta-sdk-go/types"
 )
@@ -50,19 +50,19 @@ const (
 
 	// mainnetConfigPath is the path of the Bitcoin
 	// configuration file for mainnet.
-	mainnetConfigPath = "/app/bitcoin-mainnet.conf"
+	mainnetConfigPath = "/app/metrix-mainnet.conf"
 
 	// testnetConfigPath is the path of the Bitcoin
 	// configuration file for testnet.
-	testnetConfigPath = "/app/bitcoin-testnet.conf"
+	testnetConfigPath = "/app/metrix-testnet.conf"
 
 	// Zstandard compression dictionaries
 	transactionNamespace         = "transaction"
 	testnetTransactionDictionary = "/app/testnet-transaction.zstd"
 	mainnetTransactionDictionary = "/app/mainnet-transaction.zstd"
 
-	mainnetRPCPort = 8332
-	testnetRPCPort = 18332
+	mainnetRPCPort = 33831
+	testnetRPCPort = 33841
 
 	// min prune depth is 288:
 	// https://github.com/bitcoin/bitcoin/blob/ad2952d17a2af419a04256b10b53c7377f826a27/src/validation.h#L84
@@ -79,7 +79,7 @@ const (
 	// persistent data.
 	DataDirectory = "/data"
 
-	bitcoindPath = "bitcoind"
+	metrixdPath = "metrixd"
 	indexerPath  = "indexer"
 
 	// allFilePermissions specifies anyone can do anything
@@ -143,9 +143,9 @@ func LoadConfiguration(baseDirectory string) (*Configuration, error) {
 			return nil, fmt.Errorf("%w: unable to create indexer path", err)
 		}
 
-		config.BitcoindPath = path.Join(baseDirectory, bitcoindPath)
+		config.BitcoindPath = path.Join(baseDirectory, metrixdPath)
 		if err := ensurePathExists(config.BitcoindPath); err != nil {
-			return nil, fmt.Errorf("%w: unable to create bitcoind path", err)
+			return nil, fmt.Errorf("%w: unable to create metrixd path", err)
 		}
 	case Offline:
 		config.Mode = Offline
@@ -155,6 +155,17 @@ func LoadConfiguration(baseDirectory string) (*Configuration, error) {
 		return nil, fmt.Errorf("%s is not a valid mode", modeValue)
 	}
 
+	var metrixMainNetParams = bitcoin.MainnetParams
+	var metrixTestNetParams = bitcoin.MainnetParams
+
+	metrixMainNetParams.PubKeyHashAddrID = 50
+	metrixMainNetParams.ScriptHashAddrID = 85
+
+	metrixTestNetParams.PubKeyHashAddrID = 110
+	metrixTestNetParams.ScriptHashAddrID = 187
+	metrixTestNetParams.PrivateKeyID = 239
+	metrixTestNetParams.Bech32HRPSegwit = "tm"
+
 	networkValue := os.Getenv(NetworkEnv)
 	switch networkValue {
 	case Mainnet:
@@ -163,7 +174,8 @@ func LoadConfiguration(baseDirectory string) (*Configuration, error) {
 			Network:    bitcoin.MainnetNetwork,
 		}
 		config.GenesisBlockIdentifier = bitcoin.MainnetGenesisBlockIdentifier
-		config.Params = bitcoin.MainnetParams
+		//config.Params = bitcoin.MainnetParams
+		config.Params = metrixMainNetParams
 		config.Currency = bitcoin.MainnetCurrency
 		config.ConfigPath = mainnetConfigPath
 		config.RPCPort = mainnetRPCPort
@@ -179,7 +191,8 @@ func LoadConfiguration(baseDirectory string) (*Configuration, error) {
 			Network:    bitcoin.TestnetNetwork,
 		}
 		config.GenesisBlockIdentifier = bitcoin.TestnetGenesisBlockIdentifier
-		config.Params = bitcoin.TestnetParams
+		//config.Params = bitcoin.TestnetParams
+		config.Params = metrixTestNetParams
 		config.Currency = bitcoin.TestnetCurrency
 		config.ConfigPath = testnetConfigPath
 		config.RPCPort = testnetRPCPort

@@ -12,32 +12,27 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Build bitcoind
-FROM ubuntu:18.04 as bitcoind-builder
+# Build metrixd
+FROM ubuntu:20.04 as metrixd-builder
 
 RUN mkdir -p /app \
   && chown -R nobody:nogroup /app
 WORKDIR /app
 
-# Source: https://github.com/bitcoin/bitcoin/blob/master/doc/build-unix.md#ubuntu--debian
-RUN apt-get update && apt-get install -y make gcc g++ autoconf autotools-dev bsdmainutils build-essential git libboost-all-dev \
-  libcurl4-openssl-dev libdb++-dev libevent-dev libssl-dev libtool pkg-config python python-pip libzmq3-dev wget
+# NOTE: temporarily starting out with prebuilt Metrix binaries
+# https://github.com/TheLindaProjectInc/Metrix/releases/download/4.0.6.2/metrix-linux-x64.tar.gz
+ENV METRIX_RELEASE_URL https://github.com/TheLindaProjectInc/Metrix/releases/download/4.0.6.2
+ENV METRIX_ARCHIVE metrix-linux-x64.tar.gz
+ENV METRIX_FOLDER 4.0.6.2
 
-# VERSION: Bitcoin Core 0.20.1
-RUN git clone https://github.com/bitcoin/bitcoin \
-  && cd bitcoin \
-  && git checkout 7ff64311bee570874c4f0dfa18f518552188df08
-
-RUN cd bitcoin \
-  && ./autogen.sh \
-  && ./configure --disable-tests --without-miniupnpc --without-gui --with-incompatible-bdb --disable-hardening --disable-zmq --disable-bench --disable-wallet \
-  && make
-
-RUN mv bitcoin/src/bitcoind /app/bitcoind \
-  && rm -rf bitcoin
+ADD $METRIX_RELEASE_URL/$METRIX_ARCHIVE ./
+RUN tar -xzf $METRIX_ARCHIVE \
+&& rm $METRIX_ARCHIVE \
+&& mv $METRIX_FOLDER/metrixd /app/metrixd \
+&& rm -rf $METRIX_FOLDER
 
 # Build Rosetta Server Components
-FROM ubuntu:18.04 as rosetta-builder
+FROM ubuntu:20.04 as rosetta-builder
 
 RUN mkdir -p /app \
   && chown -R nobody:nogroup /app
@@ -62,15 +57,15 @@ COPY . src
 RUN cd src \
   && go build \
   && cd .. \
-  && mv src/rosetta-bitcoin /app/rosetta-bitcoin \
+  && mv src/rosetta-metrix /app/rosetta-metrix \
   && mv src/assets/* /app \
   && rm -rf src 
 
 ## Build Final Image
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 
 RUN apt-get update && \
-  apt-get install --no-install-recommends -y libevent-dev libboost-system-dev libboost-filesystem-dev libboost-test-dev libboost-thread-dev && \
+  DEBIAN_FRONTEND="noninteractive" apt-get install --no-install-recommends -y libevent-dev libboost-system-dev libboost-filesystem-dev libboost-test-dev libboost-thread-dev libboost-all-dev libgmp && \
   apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 RUN mkdir -p /app \
@@ -80,8 +75,8 @@ RUN mkdir -p /app \
 
 WORKDIR /app
 
-# Copy binary from bitcoind-builder
-COPY --from=bitcoind-builder /app/bitcoind /app/bitcoind
+# Copy binary from metrixd-builder
+COPY --from=metrixd-builder /app/metrixd /app/metrixd
 
 # Copy binary from rosetta-builder
 COPY --from=rosetta-builder /app/* /app/
@@ -89,4 +84,4 @@ COPY --from=rosetta-builder /app/* /app/
 # Set permissions for everything added to /app
 RUN chmod -R 755 /app/*
 
-CMD ["/app/rosetta-bitcoin"]
+CMD ["/app/rosetta-metrix"]

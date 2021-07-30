@@ -18,9 +18,9 @@ import (
 	"context"
 	"testing"
 
-	"github.com/coinbase/rosetta-bitcoin/bitcoin"
-	"github.com/coinbase/rosetta-bitcoin/configuration"
-	mocks "github.com/coinbase/rosetta-bitcoin/mocks/services"
+	"github.com/TheLindaProjectInc/rosetta-metrix/bitcoin"
+	"github.com/TheLindaProjectInc/rosetta-metrix/configuration"
+	mocks "github.com/TheLindaProjectInc/rosetta-metrix/mocks/services"
 
 	"github.com/coinbase/rosetta-sdk-go/types"
 	"github.com/stretchr/testify/assert"
@@ -104,7 +104,7 @@ func TestNetworkEndpoints_Online(t *testing.T) {
 	}
 	mockClient.On("GetPeers", ctx).Return([]*types.Peer{
 		{
-			PeerID: "77.93.223.9:8333",
+			PeerID: "77.93.223.9:33830",
 		},
 	}, nil)
 	mockIndexer.On(
@@ -122,7 +122,7 @@ func TestNetworkEndpoints_Online(t *testing.T) {
 		CurrentBlockIdentifier: blockResponse.Block.BlockIdentifier,
 		Peers: []*types.Peer{
 			{
-				PeerID: "77.93.223.9:8333",
+				PeerID: "77.93.223.9:33830",
 			},
 		},
 	}, networkStatus)

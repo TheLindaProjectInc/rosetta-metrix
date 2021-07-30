@@ -20,7 +20,7 @@ import (
 	"path"
 	"testing"
 
-	"github.com/coinbase/rosetta-bitcoin/bitcoin"
+	"github.com/TheLindaProjectInc/rosetta-metrix/bitcoin"
 
 	"github.com/coinbase/rosetta-sdk-go/storage/encoder"
 	"github.com/coinbase/rosetta-sdk-go/types"
@@ -29,6 +29,17 @@ import (
 )
 
 func TestLoadConfiguration(t *testing.T) {
+	var metrixMainNetParams = bitcoin.MainnetParams
+	var metrixTestNetParams = bitcoin.MainnetParams
+
+	metrixMainNetParams.PubKeyHashAddrID = 50
+	metrixMainNetParams.ScriptHashAddrID = 85
+
+	metrixTestNetParams.PubKeyHashAddrID = 110
+	metrixTestNetParams.ScriptHashAddrID = 187
+	metrixTestNetParams.PrivateKeyID = 239
+	metrixTestNetParams.Bech32HRPSegwit = "tm"
+
 	tests := map[string]struct {
 		Mode    string
 		Network string
@@ -59,7 +70,7 @@ func TestLoadConfiguration(t *testing.T) {
 					Network:    bitcoin.MainnetNetwork,
 					Blockchain: bitcoin.Blockchain,
 				},
-				Params:                 bitcoin.MainnetParams,
+				Params:                 metrixMainNetParams,
 				Currency:               bitcoin.MainnetCurrency,
 				GenesisBlockIdentifier: bitcoin.MainnetGenesisBlockIdentifier,
 				Port:                   1000,
@@ -88,7 +99,7 @@ func TestLoadConfiguration(t *testing.T) {
 					Network:    bitcoin.TestnetNetwork,
 					Blockchain: bitcoin.Blockchain,
 				},
-				Params:                 bitcoin.TestnetParams,
+				Params:                 metrixTestNetParams,
 				Currency:               bitcoin.TestnetCurrency,
 				GenesisBlockIdentifier: bitcoin.TestnetGenesisBlockIdentifier,
 				Port:                   1000,
@@ -143,7 +154,7 @@ func TestLoadConfiguration(t *testing.T) {
 				assert.Contains(t, err.Error(), test.err.Error())
 			} else {
 				test.cfg.IndexerPath = path.Join(newDir, "indexer")
-				test.cfg.BitcoindPath = path.Join(newDir, "bitcoind")
+				test.cfg.BitcoindPath = path.Join(newDir, "metrixd")
 				assert.Equal(t, test.cfg, cfg)
 				assert.NoError(t, err)
 			}

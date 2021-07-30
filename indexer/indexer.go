@@ -22,10 +22,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/coinbase/rosetta-bitcoin/bitcoin"
-	"github.com/coinbase/rosetta-bitcoin/configuration"
-	"github.com/coinbase/rosetta-bitcoin/services"
-	"github.com/coinbase/rosetta-bitcoin/utils"
+	"github.com/TheLindaProjectInc/rosetta-metrix/bitcoin"
+	"github.com/TheLindaProjectInc/rosetta-metrix/configuration"
+	"github.com/TheLindaProjectInc/rosetta-metrix/services"
+	"github.com/TheLindaProjectInc/rosetta-metrix/utils"
 
 	"github.com/coinbase/rosetta-sdk-go/asserter"
 	"github.com/coinbase/rosetta-sdk-go/storage/database"
@@ -250,7 +250,7 @@ func Initialize(
 	return i, nil
 }
 
-// waitForNode returns once bitcoind is ready to serve
+// waitForNode returns once metrixd is ready to serve
 // block queries.
 func (i *Indexer) waitForNode(ctx context.Context) error {
 	logger := utils.ExtractLogger(ctx, "indexer")
@@ -260,15 +260,15 @@ func (i *Indexer) waitForNode(ctx context.Context) error {
 			return nil
 		}
 
-		logger.Infow("waiting for bitcoind...")
+		logger.Infow("waiting for metrixd...")
 		if err := sdkUtils.ContextSleep(ctx, nodeWaitSleep); err != nil {
 			return err
 		}
 	}
 }
 
-// Sync attempts to index Bitcoin blocks using
-// the bitcoin.Client until stopped.
+// Sync attempts to index Metrix blocks using
+// the metrix.Client until stopped.
 func (i *Indexer) Sync(ctx context.Context) error {
 	if err := i.waitForNode(ctx); err != nil {
 		return fmt.Errorf("%w: failed to wait for node", err)
@@ -301,7 +301,7 @@ func (i *Indexer) Sync(ctx context.Context) error {
 	return syncer.Sync(ctx, startIndex, indexPlaceholder)
 }
 
-// Prune attempts to prune blocks in bitcoind every
+// Prune attempts to prune blocks in metrixd every
 // pruneFrequency.
 func (i *Indexer) Prune(ctx context.Context) error {
 	logger := utils.ExtractLogger(ctx, "pruner")
@@ -320,7 +320,7 @@ func (i *Indexer) Prune(ctx context.Context) error {
 				continue
 			}
 
-			// Must meet pruning conditions in bitcoin core
+			// Must meet pruning conditions in metrix core
 			// Source:
 			// https://github.com/bitcoin/bitcoin/blob/a63a26f042134fa80356860c109edb25ac567552/src/rpc/blockchain.cpp#L953-L960
 			pruneHeight := head.Index - i.pruningConfig.Depth
@@ -329,16 +329,16 @@ func (i *Indexer) Prune(ctx context.Context) error {
 				continue
 			}
 
-			logger.Infow("attempting to prune bitcoind", "prune height", pruneHeight)
+			logger.Infow("attempting to prune metrixd", "prune height", pruneHeight)
 			prunedHeight, err := i.client.PruneBlockchain(ctx, pruneHeight)
 			if err != nil {
 				logger.Warnw(
-					"unable to prune bitcoind",
+					"unable to prune metrixd",
 					"prune height", pruneHeight,
 					"error", err,
 				)
 			} else {
-				logger.Infow("pruned bitcoind", "prune height", prunedHeight)
+				logger.Infow("pruned metrixd", "prune height", prunedHeight)
 			}
 		}
 	}

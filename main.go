@@ -24,11 +24,11 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/coinbase/rosetta-bitcoin/bitcoin"
-	"github.com/coinbase/rosetta-bitcoin/configuration"
-	"github.com/coinbase/rosetta-bitcoin/indexer"
-	"github.com/coinbase/rosetta-bitcoin/services"
-	"github.com/coinbase/rosetta-bitcoin/utils"
+	"github.com/TheLindaProjectInc/rosetta-metrix/bitcoin"
+	"github.com/TheLindaProjectInc/rosetta-metrix/configuration"
+	"github.com/TheLindaProjectInc/rosetta-metrix/indexer"
+	"github.com/TheLindaProjectInc/rosetta-metrix/services"
+	"github.com/TheLindaProjectInc/rosetta-metrix/utils"
 
 	"github.com/coinbase/rosetta-sdk-go/asserter"
 	"github.com/coinbase/rosetta-sdk-go/server"
@@ -87,7 +87,7 @@ func startOnlineDependencies(
 	)
 
 	g.Go(func() error {
-		return bitcoin.StartBitcoind(ctx, cfg.ConfigPath, g)
+		return bitcoin.StartMetrixd(ctx, cfg.ConfigPath, g)
 	})
 
 	i, err := indexer.Initialize(
@@ -197,10 +197,10 @@ func main() {
 	}
 
 	if signalReceived {
-		logger.Fatalw("rosetta-bitcoin halted")
+		logger.Fatalw("rosetta-metrix halted")
 	}
 
 	if err != nil {
-		logger.Fatalw("rosetta-bitcoin sync failed", "error", err)
+		logger.Fatalw("rosetta-metrix sync failed", "error", err)
 	}
 }

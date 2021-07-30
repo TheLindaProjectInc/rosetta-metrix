@@ -18,9 +18,9 @@ import (
 	"context"
 	"testing"
 
-	"github.com/coinbase/rosetta-bitcoin/bitcoin"
-	"github.com/coinbase/rosetta-bitcoin/configuration"
-	mocks "github.com/coinbase/rosetta-bitcoin/mocks/services"
+	"github.com/TheLindaProjectInc/rosetta-metrix/bitcoin"
+	"github.com/TheLindaProjectInc/rosetta-metrix/configuration"
+	mocks "github.com/TheLindaProjectInc/rosetta-metrix/mocks/services"
 
 	"github.com/coinbase/rosetta-sdk-go/types"
 	"github.com/stretchr/testify/assert"

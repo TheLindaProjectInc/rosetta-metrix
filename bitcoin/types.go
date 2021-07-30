@@ -18,13 +18,13 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/btcsuite/btcd/chaincfg"
+	"github.com/TheLindaProjectInc/rosetta-metrix/metrixsuite/btcd/chaincfg"
 	"github.com/coinbase/rosetta-sdk-go/types"
 )
 
 const (
-	// Blockchain is Bitcoin.
-	Blockchain string = "Bitcoin"
+	// Blockchain is Metrix.
+	Blockchain string = "Metrix"
 
 	// MainnetNetwork is the value of the network
 	// in MainnetNetworkIdentifier.
@@ -78,17 +78,17 @@ const (
 // Fee estimate constants
 // Source: https://bitcoinops.org/en/tools/calc-size/
 const (
-	MinFeeRate            = float64(0.00001) // nolint:gomnd
-	TransactionOverhead   = 12               // 4 version, 2 segwit flag, 1 vin, 1 vout, 4 lock time
-	InputSize             = 68               // 4 prev index, 32 prev hash, 4 sequence, 1 script size, ~27 script witness
-	OutputOverhead        = 9                // 8 value, 1 script size
-	P2PKHScriptPubkeySize = 25               // P2PKH size
+	MinFeeRate            = float64(10) // nolint:gomnd
+	TransactionOverhead   = 12          // 4 version, 2 segwit flag, 1 vin, 1 vout, 4 lock time
+	InputSize             = 68          // 4 prev index, 32 prev hash, 4 sequence, 1 script size, ~27 script witness
+	OutputOverhead        = 9           // 8 value, 1 script size
+	P2PKHScriptPubkeySize = 25          // P2PKH size
 )
 
 var (
 	// MainnetGenesisBlockIdentifier is the genesis block for mainnet.
 	MainnetGenesisBlockIdentifier = &types.BlockIdentifier{
-		Hash: "000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f",
+		Hash: "000057c278d417dfca66d2bcde29d4875b06ea7f5935086bf4f1f968c91c3377",
 	}
 
 	// MainnetParams are the params for mainnet.
@@ -96,13 +96,13 @@ var (
 
 	// MainnetCurrency is the *types.Currency for mainnet.
 	MainnetCurrency = &types.Currency{
-		Symbol:   "BTC",
+		Symbol:   "MRX",
 		Decimals: Decimals,
 	}
 
 	// TestnetGenesisBlockIdentifier is the genesis block for testnet.
 	TestnetGenesisBlockIdentifier = &types.BlockIdentifier{
-		Hash: "000000000933ea01ad0ee984209779baaec3ced90fa3f408719526f8d77f4943",
+		Hash: "00007965374994a1a9e0c813c0d935c3ca224dd1cc582d09f11afe134877adf6",
 	}
 
 	// TestnetParams are the params for testnet.
@@ -110,7 +110,7 @@ var (
 
 	// TestnetCurrency is the *types.Currency for testnet.
 	TestnetCurrency = &types.Currency{
-		Symbol:   "tBTC",
+		Symbol:   "tMRX",
 		Decimals: Decimals,
 	}
 
@@ -499,7 +499,7 @@ func (r rawMempoolResponse) Err() error {
 
 // CoinIdentifier converts a tx hash and vout into
 // the canonical CoinIdentifier.Identifier used in
-// rosetta-bitcoin.
+// rosetta-metrix.
 func CoinIdentifier(hash string, vout int64) string {
 	return fmt.Sprintf("%s:%d", hash, vout)
 }

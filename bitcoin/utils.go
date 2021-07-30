@@ -19,10 +19,10 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/btcsuite/btcd/chaincfg"
-	"github.com/btcsuite/btcd/chaincfg/chainhash"
-	"github.com/btcsuite/btcd/txscript"
-	"github.com/btcsuite/btcutil"
+	"github.com/TheLindaProjectInc/rosetta-metrix/metrixsuite/btcd/chaincfg"
+	"github.com/TheLindaProjectInc/rosetta-metrix/metrixsuite/btcd/chaincfg/chainhash"
+	"github.com/TheLindaProjectInc/rosetta-metrix/metrixsuite/btcd/txscript"
+	"github.com/TheLindaProjectInc/rosetta-metrix/metrixsuite/btcutil"
 	"github.com/coinbase/rosetta-sdk-go/types"
 )
 
